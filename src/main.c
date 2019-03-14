@@ -6,6 +6,10 @@
 
 #include "sample.h"
 
+#include <drivers/led/lp5521.h>
+#include <drivers/sensors/lis3mdl.h>
+#include <drivers/sensors/icm20649.h>
+
 #define BUSY_WAIT_DELAY_US		(10 * 1000000)
 
 #define LPS1_STATE_ENTER_TO		10
@@ -121,6 +125,28 @@ void main(void)
 	bt_conn_auth_cb_register(&auth_cb_display);
 #endif
 
+#ifdef CONFIG_LIS3MDL
+	struct device *lis3mdl = device_get_binding(DT_ST_LIS3MDL_0_LABEL);
+
+	if(lis3mdl_sleep(lis3mdl) < 0) {
+		printk("Failed to put lis3mdl to sleep\n");
+	}
+#endif
+
+#ifdef CONFIG_ICM20649
+	struct device *icm20649 = device_get_binding(DT_TDK_ICM20649_0_LABEL);
+	if(icm20649_sleep(icm20649) < 0) {
+		printk("Failed to put icm20649 to sleep\n");
+	}
+#endif
+
+#ifdef CONFIG_LP5521
+	struct device *lp5521 = device_get_binding(DT_TI_LP5521_0_LABEL);
+
+	if(lp5521_sleep(lp5521) < 0) {
+		printk("Failed to put lp5521 to sleep\n");
+	}
+#endif
 
 	//gpio_port = device_get_binding(PORT);
 
